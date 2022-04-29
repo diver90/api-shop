@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  php-fpm:
+    container_name: php-fpm
+    build:
+      context: ./../
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        - PUID=${PUID}
+        - PGID=${PGID}
+        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
+    environment:
+      PHP_IDE_CONFIG: "serverName=Docker"
+    volumes:
+      - /var/www/vendor/
+      - ./../:/var/www/
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - ${NGINX_HOST_HTTP_PORT}:80
+    volumes:
+      - ../:/var/www:rw
+    depends_on:
+      - php-fpm
+      - docker-mysql
+
+
+  ###> doctrine/doctrine-bundle ###
+  docker-mysql:
+    image: mysql:8
+    container_name: docker-mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=docker_shop
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=root123
+    ports:
+      - "3306:3306"
+    volumes:
+        - /dbdata:/var/lib/mysql
+
+volumes:
+  db_data:
