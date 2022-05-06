@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LocaleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LocaleRepository::class)]
@@ -23,13 +21,8 @@ class Locale
     #[ORM\Column(type: 'string', length: 3)]
     private $code;
 
-    #[ORM\OneToMany(mappedBy: 'locale', targetEntity: Country::class)]
-    private $countries;
-
-    public function __construct()
-    {
-        $this->countries = new ArrayCollection();
-    }
+    #[ORM\OneToOne(mappedBy: 'locale', targetEntity: Country::class, cascade: ['persist', 'remove'])]
+    private $country;
 
     public function getId(): ?int
     {
@@ -60,32 +53,19 @@ class Locale
         return $this;
     }
 
-    /**
-     * @return Collection<int, Country>
-     */
-    public function getCountries(): Collection
+    public function getCountry(): ?Country
     {
-        return $this->countries;
+        return $this->country;
     }
 
-    public function addCountry(Country $country): self
+    public function setCountry(Country $country): self
     {
-        if (!$this->countries->contains($country)) {
-            $this->countries[] = $country;
+        // set the owning side of the relation if necessary
+        if ($country->getLocale() !== $this) {
             $country->setLocale($this);
         }
 
-        return $this;
-    }
-
-    public function removeCountry(Country $country): self
-    {
-        if ($this->countries->removeElement($country)) {
-            // set the owning side to null (unless already changed)
-            if ($country->getLocale() === $this) {
-                $country->setLocale(null);
-            }
-        }
+        $this->country = $country;
 
         return $this;
     }

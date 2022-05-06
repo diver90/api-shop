@@ -47,6 +47,17 @@ class ProductRepository extends ServiceEntityRepository
         }
     }
 
+    public function findJoinedToVat(): ?iterable
+    {
+        $entityManager = $this->getEntityManager();
+
+        return $entityManager->createQuery(
+            'SELECT p, v
+            FROM App\Entity\Product p
+            INNER JOIN p.vat v'
+        )->getResult();
+    }
+
     // /**
     //  * @return Product[] Returns an array of Product objects
     //  */

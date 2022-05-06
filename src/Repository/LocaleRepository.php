@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Locale;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,32 +48,18 @@ class LocaleRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return Locale[] Returns an array of Locale objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string $locale
+     * @return Locale|null
+     * @throws NonUniqueResultException
+     */
+    public function findOneByCode(string $locale): ?Locale
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Locale
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('l.code = :val')
+            ->setParameter('val', $locale)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }

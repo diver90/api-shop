@@ -23,7 +23,7 @@ class   Country
     #[ORM\OneToMany(mappedBy: 'country', targetEntity: Vat::class, orphanRemoval: true)]
     private $vat;
 
-    #[ORM\ManyToOne(targetEntity: Locale::class, inversedBy: 'countries')]
+    #[ORM\OneToOne(inversedBy: 'country', targetEntity: Locale::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private $locale;
 
@@ -84,7 +84,7 @@ class   Country
         return $this->locale;
     }
 
-    public function setLocale(?Locale $locale): self
+    public function setLocale(Locale $locale): self
     {
         $this->locale = $locale;
 

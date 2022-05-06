@@ -3,13 +3,65 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ProductCollectionController;
+use App\Controller\ProductController;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [ "get",
+        "get_by_locale" => [
+            "method" => "GET",
+            "path" => "/products/all/{localeCode}",
+            "controller" => ProductCollectionController::class,
+            "read" => false,
+            "openapi_context" => [
+                "summary" => "Retrieves the collection of Product resources, including full price with VAT for requested locale/country",
+                "description" => "Retrieves a Product resource, including full price with VAT for requested locale/country",
+                "parameters" => [
+                    [
+                        "name" => "localeCode",
+                        "in" => "path",
+                        "description" => "The ISO code of needed locale",
+                        "type" => "string",
+                        "required" => true,
+                        "example"=> "eng"
+                    ]
+                ],
+            ],
+
+        ], ],
+    itemOperations: [
+        "get",
+        "patch",
+        "delete",
+        "put",
+        "get_by_locale" => [
+            "method" => "GET",
+            "path" => "/products/{id}/{localeCode}",
+            "controller" => ProductController::class,
+            "read" => false,
+            "openapi_context" => [
+                "summary" => "Retrieves a Product resource, including full price with VAT for requested locale/country",
+                "description" => "Retrieves a Product resource, including full price with VAT for requested locale/country",
+                "parameters" => [
+                    [
+                        "name" => "localeCode",
+                        "in" => "path",
+                        "description" => "The ISO code of needed locale",
+                        "type" => "string",
+                        "required" => true,
+                        "example"=> "eng"
+                    ]
+                ],
+            ],
+
+        ],
+    ]
+)]
 class Product
 {
 

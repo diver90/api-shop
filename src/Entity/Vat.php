@@ -7,6 +7,8 @@ use App\Repository\VatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VatRepository::class)]
 #[ApiResource]
@@ -18,6 +20,11 @@ class Vat
     private $id;
 
     #[ORM\Column(type: 'float')]
+    #[Assert\Range(
+        notInRangeMessage: 'Rate must be between {{ min }} and {{ max }}',
+        min: 0,
+        max: 20,
+    )]
     private $rate;
 
     #[ORM\Column(type: 'string', length: 255)]
